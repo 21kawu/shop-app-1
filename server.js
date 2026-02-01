@@ -33,6 +33,9 @@ app.post("/api/send", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log("Serwer działa na porcie 3001");
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log("Serwer działa na porcie " + PORT);
 });
+
