@@ -1,41 +1,35 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 const cors = require("cors");
+const { Resend } = require("resend");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+const resend = new Resend(process.env.RESEND_KEY);
+
 app.post("/api/send", async (req, res) => {
   const { items } = req.body;
 
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "rekkibass@gmail.com",
-        pass: "ndfmquyetmcefenx",
-      },
-    });
-
-    await transporter.sendMail({
-      from: "rekkibass@gmail.com",
-      to: "rekkibass@gmail.com",
-      subject: "Nowe zamówienie",
-      text: `Wybrane produkty: ${items}`,
+    await resend.emails.send({
+      from: "Walentynki <onboarding@resend.dev>",
+      to: ["rekkibass@gmail.com"],
+      subject: "Nowe zamówienie ❤️",
+      html: `<h2>Wybrane rzeczy:</h2><p>${items}</p>`,
     });
 
     res.json({ success: true });
+
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Błąd wysyłania" });
+    console.error(err);
+    res.status(500).json({ error: "Mail error" });
   }
 });
 
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log("Serwer działa na porcie " + PORT);
+  console.log("Server running on " + PORT);
 });
-
